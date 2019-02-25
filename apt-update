@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+
+# If the color table file exists,
+if [[ -f "${coltable}" ]]; then
+    # source it
+    source ${coltable}
+# Otherwise,
+else
+    # Set these values so the installer can still run in color
+    COL_NC='\e[0m' # No Color
+	COL_LIGHT_BLUE='\e[34;40m'
+    COL_LIGHT_GREEN='\e[1;32m'
+    COL_LIGHT_RED='\e[1;31m'
+    TICK="[${COL_LIGHT_GREEN}✓${COL_NC}]"
+    CROSS="[${COL_LIGHT_RED}✗${COL_NC}]"
+    INFO="[i]"
+    # shellcheck disable=SC2034
+    DONE="${COL_LIGHT_GREEN} done!${COL_NC}"
+    OVER="\\r\\033[K"
+fi
+
+accii_unifi() {
+echo -e ""
+}
+
+is_command() {
+    # Checks for existence of string passed in as only function argument.
+    # Exit value of 0 when exists, 1 if not exists. Value is the result
+    # of the `command` shell built-in call.
+    local check_command="$1"
+    command -v "${check_command}" >/dev/null 2>&1
+}
+
+add_server_repo() {
+if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-rec-master main' '/etc/apt/sources.list.d/pdns.list'; then
+	printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+else
+printf "%b  %b Adding Repository\\n" "${OVER}"  "${INFO}"
+echo "deb http://repo.powerdns.com/raspbian stretch-rec-master main" >> /etc/apt/sources.list.d/pdns.list
+	if grep -Fq 'deb http://http.us.debian.org/debian wheezy main contrib non-free' '/etc/apt/sources.list.d/pdns.list'; then
+	printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+	apt-get update
+	printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
+	else
+	add_repo
+	fi
+fi
+}
+
+add_recursor_repo() {
+if grep -Fq '' '/etc/apt/sources.list.d/pdns.list'; then
+	printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+else
+printf "%b  %b Adding Repository\\n" "${OVER}"  "${INFO}"
+echo "deb http://http.us.debian.org/debian wheezy main contrib non-free" >> /etc/apt/sources.list.d/pdns.list
+	if grep -Fq 'deb http://http.us.debian.org/debian wheezy main contrib non-free' '/etc/apt/sources.list.d/pdns.list'; then
+	printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+	apt-get update
+	printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
+	else
+	add_repo
+	fi
+fi
+}
+
+add_dnsroot_repo() {
+if grep -Fq '' '/etc/apt/sources.list.d/pdns.list'; then
+	printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+else
+printf "%b  %b Adding Repository\\n" "${OVER}"  "${INFO}"
+echo "deb http://http.us.debian.org/debian wheezy main contrib non-free" >> /etc/apt/sources.list.d/pdns.list
+	if grep -Fq 'deb http://http.us.debian.org/debian wheezy main contrib non-free' '/etc/apt/sources.list.d/pdns.list'; then
+	printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+	apt-get update
+	printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
+	else
+	add_repo
+	fi
+fi
+}
+
+run_install() {
+apt-get -y install pimd
+}
+
+rw_check() {
+epoch=$(date +%s)
+touch /etc/rwcheck-$epoch
+if [[ -f /etc/rwcheck-$epoch ]]; then
+printf "%b  %b Read/Write Access Confirmed\\n" "${OVER}"  "${TICK}"
+rm /etc/rwcheck-$epoch
+else            
+printf "%b  %b Read Only Access\\n" "${OVER}" "${CROSS}"
+fi 
+}
+
+root_check() {
+    # Must be root to install
+local str="Root user check"
+printf "\\n"
+if [[ "${EUID}" -eq 0 ]]; then
+printf "  %b %s\\n" "${TICK}" "${str}"
+else
+printf "  %b %s\\n" "${CROSS}" "${str}"
+printf "  %b %bScript called with non-root privileges%b\\n" "${INFO}" "${COL_LIGHT_RED}" "${COL_NC}"
+printf "  The unifi-pimd requires elevated privileges to install and run\\n"
+printf "  %b Sudo utility check" "${INFO}"
+if is_command sudo ; then
+printf "%b  %b Sudo utility check\\n" "${OVER}"  "${TICK}"
+# Download the install script and run it with admin rights
+exec curl -sSL https://raw.githubusercontent.com/bcsanford/unifi-pimd/master/install | sudo bash "$@"
+exit $?
+else
+printf "%b  %b Sudo utility check\\n" "${OVER}" "${CROSS}"
+printf "  %b Sudo is needed to install and configure unifi-pimd\\n\\n" "${INFO}"
+printf "  %b %bPlease re-run this installer as root${COL_NC}\\n" "${INFO}" "${COL_LIGHT_RED}"
+exit 1
+fi
+fi
+}
+
+main() {
+accii_unifi
+printf "%b  %b unifi-pimd Version: 0.9.4\\n" "${OVER}"  "${INFO}"
+rw_check
+root_check
+
+add_repo
+run_install
+
+}
+
+main "$@"
