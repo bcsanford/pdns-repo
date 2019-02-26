@@ -82,7 +82,7 @@ add_dnsdist_repo() {
 }
 
 pin_pdns_pkg() {
-	echo <<- EOF > /etc/apt/preferences.d/pdns
+	cat > /etc/apt/preferences.d/pdns <<-EOF
 	Package: pdns-*
 	Pin: origin repo.powerdns.com
 	Pin-Priority: 600
@@ -90,7 +90,7 @@ pin_pdns_pkg() {
 }
 
 pin_dnsdist_pkg() {
-	echo <<- EOF > /etc/apt/preferences.d/dnsdist
+	cat > /etc/apt/preferences.d/dnsdist <<-EOF
 	Package: dnsdist*
 	Pin: origin repo.powerdns.com
 	Pin-Priority: 600
