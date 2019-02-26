@@ -35,48 +35,45 @@ is_command() {
 
 add_server_repo() {
 	if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-auth-master main' '/etc/apt/sources.list.d/pdns.list'; then
-		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+		printf "%b  %b Repository Already Exists\\n" "${OVER}"  "${TICK}"
 	else
 	printf "%b  %b Adding Repository\\n" "${OVER}"  "${INFO}"
 	echo "deb http://repo.powerdns.com/raspbian stretch-auth-master main" >> /etc/apt/sources.list.d/pdns.list
 		if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-auth-master main' '/etc/apt/sources.list.d/pdns.list'; then
 		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
 		update=1
-		printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
 		else
-		add_repo
+		add_server_repo
 		fi
 	fi
 }
 
 add_recursor_repo() {
 	if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-rec-master main' '/etc/apt/sources.list.d/pdns.list'; then
-		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+		printf "%b  %b Repository Already Exists\\n" "${OVER}"  "${TICK}"
 	else
 	printf "%b  %b Adding Repository\\n" "${OVER}"  "${INFO}"
 	echo "deb http://repo.powerdns.com/raspbian stretch-rec-master main" >> /etc/apt/sources.list.d/pdns.list
 		if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-rec-master main' '/etc/apt/sources.list.d/pdns.list'; then
 		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
 		update=1
-		printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
 		else
-		add_repo
+		add_recursor_repo
 		fi
 	fi
 }
 
 add_dnsdist_repo() {
 	if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-dnsdist-master main' '/etc/apt/sources.list.d/pdns.list'; then
-		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
+		printf "%b  %b Repository Already Exists\\n" "${OVER}"  "${TICK}"
 	else
 	printf "%b  %b Adding Repository\\n" "${OVER}"  "${INFO}"
 	echo "deb http://repo.powerdns.com/raspbian stretch-dnsdist-master main" >> /etc/apt/sources.list.d/pdns.list
 		if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-dnsdist-master main' '/etc/apt/sources.list.d/pdns.list'; then
 		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
 		update=1
-		printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
 		else
-		add_repo
+		add_dnsdist_repo
 		fi
 	fi
 }
