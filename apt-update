@@ -41,7 +41,7 @@ add_server_repo() {
 	echo "deb http://repo.powerdns.com/raspbian stretch-auth-master main" >> /etc/apt/sources.list.d/pdns.list
 		if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-auth-master main' '/etc/apt/sources.list.d/pdns.list'; then
 		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
-		apt-get update
+		update=1
 		printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
 		else
 		add_repo
@@ -57,7 +57,7 @@ add_recursor_repo() {
 	echo "deb http://repo.powerdns.com/raspbian stretch-rec-master main" >> /etc/apt/sources.list.d/pdns.list
 		if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-rec-master main' '/etc/apt/sources.list.d/pdns.list'; then
 		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
-		apt-get update
+		update=1
 		printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
 		else
 		add_repo
@@ -73,7 +73,7 @@ add_dnsdist_repo() {
 	echo "deb http://repo.powerdns.com/raspbian stretch-dnsdist-master main" >> /etc/apt/sources.list.d/pdns.list
 		if grep -Fq 'deb http://repo.powerdns.com/raspbian stretch-dnsdist-master main' '/etc/apt/sources.list.d/pdns.list'; then
 		printf "%b  %b Repository Added\\n" "${OVER}"  "${TICK}"
-		apt-get update
+		update=1
 		printf "%b  %b Package Library Updated\\n" "${OVER}"  "${TICK}"
 		else
 		add_repo
