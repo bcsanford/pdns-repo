@@ -100,7 +100,7 @@ pin_dnsdist_pkg() {
 add_pkgkey_reload() {
 	curl https://repo.powerdns.com/FD380FBB-pub.asc | apt-key add - &&
 	curl https://repo.powerdns.com/CBC8B383-pub.asc | apt-key add - &&
-	apt-get update &&
+	apt-get update
 }
 
 rw_check() {
